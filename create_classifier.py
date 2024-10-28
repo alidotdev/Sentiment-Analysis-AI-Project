@@ -1,0 +1,45 @@
+import numpy as np
+from PIL import Image
+import os, cv2
+
+
+
+# Method to train custom classifier to recognize face
+def train_classifer(name):
+    # Read all the images in custom data-set
+    path = os.path.join(os.getcwd()+"/data/"+name+"/")
+
+    faces = []
+    ids = []
+    labels = []
+    pictures = {}
+
+    print('I am train_classifies class')
+    # Store images in a numpy format and ids of the user on the same index in imageNp and id lists
+
+    for root,dirs,files in os.walk(path):
+            pictures = files
+
+
+    for pic in pictures :
+
+            imgpath = path+pic
+        #     print("imgpath ",imgpath)
+            img = Image.open(imgpath).convert('L')
+        #     print("img ",img)
+            imageNp = np.array(img, 'uint8')
+        #     print("imgageNp ",imageNp)
+        #     print("splitted ",pic.split(name)[0] )
+            x = pic.split(name)[0]
+            id = int(x)
+            #names[name].append(id)
+            faces.append(imageNp)
+            ids.append(id)
+
+    ids = np.array(ids)
+
+    #Train and save classifier
+    clf = cv2.face.LBPHFaceRecognizer_create()
+    clf.train(faces, ids)
+    clf.write("./data/classifiers/"+name+"_classifier.xml")
+
